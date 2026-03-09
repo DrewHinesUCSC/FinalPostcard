@@ -4,7 +4,10 @@ Drew Hines
 Setting up prototype using Professor Altice ScrollingStyles
 as a template, using to test if i have properly created the tilemap
 using Tiled and everything will load. I will replace movement with FSM
-and current buildings are (hopefully) temporary
+and current buildings are (hopefully) temporary.
+03/08
+Built out 1st "restaurant area", will be adding sounds and audio track tomorrow
+and work on getting 2nd area, possible bar scene. Added new tilemap and assets 
 */
 
 
@@ -15,7 +18,7 @@ and current buildings are (hopefully) temporary
 let config = {
     parent: 'phaser-game',
     type: Phaser.CANVAS,
-    redner: {
+    render: {
         pixelArt: true
     },
     physics: {
