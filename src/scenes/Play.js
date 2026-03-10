@@ -10,6 +10,7 @@ class Play extends Phaser.Scene{
     preload(){
         this.load.image('map', './assets/tilemap.png')
         this.load.image('interiors', './assets/Interiors_free_16x16.png')
+        this.load.image('walls','./assets/sprite5.png')
         this.load.spritesheet('sprites', './assets/tilemap.png', {
             frameWidth: 16,
             frameHeight: 16,
@@ -22,8 +23,9 @@ class Play extends Phaser.Scene{
         const map = this.add.tilemap('postcard')
         const tileset = map.addTilesetImage('Temp', 'map')
         const tilesetInteriors = map.addTilesetImage('Interiors', 'interiors')
-        const groundLayer = map.createLayer('Ground', [tileset, tilesetInteriors], 0, 0)
-        const housesLayer = map.createLayer('Houses', [tileset, tilesetInteriors], 0, 0)
+        const tilesetWalls = map.addTilesetImage('Walls','walls')
+        const groundLayer = map.createLayer('Ground', [tileset, tilesetInteriors,tilesetWalls], 0, 0)
+        const housesLayer = map.createLayer('Houses', [tileset, tilesetInteriors, tilesetWalls], 0, 0)
 
         // Had issues with collide object layer working with Tiled, found some ideas 
         // from Youtuber ourcade: https://www.youtube.com/@ourcadetv
