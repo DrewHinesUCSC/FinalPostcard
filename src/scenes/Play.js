@@ -124,6 +124,7 @@ class Play extends Phaser.Scene{
                 this.canTriggerDialog = false
                 this.dialogIndex = 0
                 this.showDialog()
+                this.stepsSFX.stop()
             }
         })
 
