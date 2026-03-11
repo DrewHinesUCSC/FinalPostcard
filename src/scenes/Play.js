@@ -11,6 +11,12 @@ class Play extends Phaser.Scene{
         this.load.image('map', './assets/tilemap.png')
         this.load.image('interiors', './assets/Interiors_free_16x16.png')
         this.load.image('walls','./assets/sprite5.png')
+        this.load.image('NO','./assets/NO.png')
+        this.load.spritesheet('tarotNPC','./assets/NPC16.png',{
+            frameWidth: 16,
+            frameHeight: 16
+
+        })
         this.load.spritesheet('sprites', './assets/tilemap.png', {
             frameWidth: 16,
             frameHeight: 16,
@@ -24,8 +30,17 @@ class Play extends Phaser.Scene{
         const tileset = map.addTilesetImage('Temp', 'map')
         const tilesetInteriors = map.addTilesetImage('Interiors', 'interiors')
         const tilesetWalls = map.addTilesetImage('Walls','walls')
-        const groundLayer = map.createLayer('Ground', [tileset, tilesetInteriors,tilesetWalls], 0, 0)
-        const housesLayer = map.createLayer('Houses', [tileset, tilesetInteriors, tilesetWalls], 0, 0)
+        const groundLayer = map.createLayer('Ground', 
+            [tileset, tilesetInteriors,tilesetWalls], 0, 0)
+        const housesLayer = map.createLayer('Houses', 
+            [tileset, tilesetInteriors, tilesetWalls], 0, 0)
+
+        //creating NPC chars to interact with player, will add in dialog later
+        const tarotObj = map.getObjectLayer('TarotRdr').objects[0]
+        this.tarotRdr = this.physics.add.staticSprite(
+            tarotObj.x + tarotObj.width/2,
+            tarotObj.y - tarotObj.height/2,
+            'tarotNPC', 68)
 
         // Had issues with collide object layer working with Tiled, found some ideas 
         // from Youtuber ourcade: https://www.youtube.com/@ourcadetv
