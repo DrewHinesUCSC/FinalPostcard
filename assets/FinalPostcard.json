@@ -917,7 +917,7 @@
                         {
                          "name":"isCollidable",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"",
