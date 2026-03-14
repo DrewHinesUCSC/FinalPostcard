@@ -11,7 +11,8 @@ class Play extends Phaser.Scene{
         this.load.image('map', './assets/tilemap.png')
         this.load.image('interiors', './assets/Interiors_free_16x16.png')
         this.load.image('walls','./assets/sprite5.png')
-        this.load.image('NO','./assets/NO.png')
+        this.load.image('roomBldr', './assets/Room_Builder_free_16x16.png')
+        this.load.image('graveyard', './assets/19_Graveyard_16x16.png')
         this.load.spritesheet('tarotNPC','./assets/NPC16.png',{
             frameWidth: 16,
             frameHeight: 16
@@ -34,10 +35,13 @@ class Play extends Phaser.Scene{
         const tileset = map.addTilesetImage('Temp', 'map')
         const tilesetInteriors = map.addTilesetImage('Interiors', 'interiors')
         const tilesetWalls = map.addTilesetImage('Walls','walls')
+        const tilesetRoomBldr = map.addTilesetImage('RoomBldr', 'roomBldr')
+        const tilesetGraveyard = map.addTilesetImage('Graveyard', 'graveyard')
+        const tilesetNPC = map.addTilesetImage('NPC', 'tarotNPC')
         const groundLayer = map.createLayer('Ground', 
-            [tileset, tilesetInteriors,tilesetWalls], 0, 0)
+            [tileset, tilesetInteriors, tilesetWalls, tilesetRoomBldr, tilesetGraveyard], 0, 0)
         const housesLayer = map.createLayer('Houses', 
-            [tileset, tilesetInteriors, tilesetWalls], 0, 0)
+            [tileset, tilesetInteriors, tilesetWalls, tilesetRoomBldr, tilesetGraveyard, tilesetNPC], 0, 0)
 
             //adding footstep sounds
         this.stepsSFX = this.sound.add('steps',{
@@ -59,15 +63,73 @@ class Play extends Phaser.Scene{
             tarotObj.y - tarotObj.height/2,
             'tarotNPC', 68)
 
+        const vuduObj = map.getObjectLayer('VuduGuy').objects[0]
+        this.vuduGuy = this.physics.add.staticSprite(
+            vuduObj.x + vuduObj.width/2,
+            vuduObj.y - vuduObj.height/2,
+            'tarotNPC', 64)
+
+        // RestPOS and Bar are invisible trigger zones (rectangles)
+        const restPOSObj = map.getObjectLayer('RestPOS').objects[0]
+        this.restPOS = this.add.rectangle(
+            restPOSObj.x + restPOSObj.width/2,
+            restPOSObj.y + restPOSObj.height/2,
+            restPOSObj.width,
+            restPOSObj.height
+        )
+        this.physics.add.existing(this.restPOS, true)
+
+        const barObj = map.getObjectLayer('Bar').objects[0]
+        this.bar = this.add.rectangle(
+            barObj.x + barObj.width/2,
+            barObj.y + barObj.height/2,
+            barObj.width,
+            barObj.height
+        )
+        this.physics.add.existing(this.bar, true)
+
         //trying out dialog method similar to dialogbox CP in class, might
         //change but I'll see how this works first. Not sure there will be enough
         // dialog to use a whole JSON file as it will be minimal
-        this.dialogLines = [
-            "Let's see what the cards have in store for you..."
+        //Added dialog for all four interactions. Still seems simple enough
+        //to keep here instead of json file
+        this.tarotDialogLines = [
+            "Let's see what the cards have in store for you...",
+            "Press Y to find out what the spirits have to say"
+            
         ]
+        this.vuduDialogLines = [
+            "The spirits whisper secrets to those who listen...",
+            "Your fate is bound to this place.",
+            "Press Y if you aren't afraid of the macabre"
+        ]
+        this.restPOSDialogLines = [
+            "We serve all of New Orleans favorites!",
+            "I would highly suggest the Gumbo today",
+            "Press Y for a bowl of Gumbo"
+        ]
+        this.barDialogLines = [
+            "Hurricanes so good you want remember yo name",
+            "If you still standind after 3, you are stronger than me!",
+            "Press Y for a Hurricane"
+        ]
+        this.currentDialogLines = []
         this.dialogIndex = 0
         this.inDialog = false
-        this.canTriggerDialog = true
+        this.canTriggerDialog = {
+            tarot: true,
+            vudu: true,
+            restPOS: true,
+            bar: true
+        }
+
+        // Track which activities have been completed
+        this.activitiesCompleted = {
+            tarot: false,
+            vudu: false,
+            restPOS: false,
+            bar: false
+        }
 
         //Going to use simple phaser box graphics
         this.dialogBox = this.add.graphics()
@@ -84,9 +146,21 @@ class Play extends Phaser.Scene{
         this.dialogText.setDepth(11)
         this.dialogText.setVisible(false)
 
+        // NOLA Tasks UI counter (top-left corner)
+        this.taskCounter = this.add.text(10, 10, 'NOLA Tasks: 0/4', {
+            fontSize: '10px',
+            fill: '#ffffff'
+        })
+        this.taskCounter.setScrollFactor(0)
+        this.taskCounter.setDepth(10)
+
         //P1 will be frozen during dialog, adding space key to advance
         this.spaceKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.SPACE
+        )
+        // Y key to complete activities
+        this.yKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.Y
         )
 
         // Had issues with collide object layer working with Tiled, found some ideas 
@@ -119,13 +193,34 @@ class Play extends Phaser.Scene{
 
         // Overlap with TarotRdr NPC triggers dialog
         this.physics.add.overlap(this.p1, this.tarotRdr, () => {
-            if(!this.inDialog && this.canTriggerDialog){
-                this.inDialog = true
-                this.canTriggerDialog = false
-                this.dialogIndex = 0
-                this.showDialog()
-                this.stepsSFX.stop()
+            if(!this.inDialog && this.canTriggerDialog.tarot){
+                this.startDialog('tarot', this.tarotDialogLines)
             }
+            this.stepsSFX.stop()
+        })
+
+        // Overlap with VuduGuy
+        this.physics.add.overlap(this.p1, this.vuduGuy, () => {
+            if(!this.inDialog && this.canTriggerDialog.vudu){
+                this.startDialog('vudu', this.vuduDialogLines)
+            }
+            this.stepsSFX.stop()
+        })
+
+        // Overlap with RestPOS trigger zone
+        this.physics.add.overlap(this.p1, this.restPOS, () => {
+            if(!this.inDialog && this.canTriggerDialog.restPOS){
+                this.startDialog('restPOS', this.restPOSDialogLines)
+            }
+            this.stepsSFX.stop()
+        })
+
+        // Overlap with Bar trigger zone
+        this.physics.add.overlap(this.p1, this.bar, () => {
+            if(!this.inDialog && this.canTriggerDialog.bar){
+                this.startDialog('bar', this.barDialogLines)
+            }
+            this.stepsSFX.stop()
         })
 
         cursors = this.input.keyboard.createCursorKeys()
@@ -179,9 +274,35 @@ class Play extends Phaser.Scene{
         if(this.inDialog){
             this.p1.setVelocity(0,0)
             this.p1.anims.stop()
+            
+            // Y key completes current activity
+            if(Phaser.Input.Keyboard.JustDown(this.yKey)) {
+                this.activitiesCompleted[this.currentNPC] = true
+                
+                // Update task counter by checking if values are strictly true (===)
+                const completed = Object.values(this.activitiesCompleted).filter(v => v).length
+                this.taskCounter.setText(`NOLA Tasks: ${completed}/4`)
+                
+                this.inDialog = false
+                this.dialogBox.setVisible(false)
+                this.dialogText.setVisible(false)
+                
+                // Check if all 4 activities are complete
+                const allComplete = this.activitiesCompleted.tarot &&
+                                   this.activitiesCompleted.vudu &&
+                                   this.activitiesCompleted.restPOS &&
+                                   this.activitiesCompleted.bar
+                
+                if(allComplete) {
+                    this.bgMusic.stop()
+                    this.scene.start('EndScene')
+                }
+                return
+            }
+            
             if(Phaser.Input.Keyboard.JustDown(this.spaceKey)){
                 this.dialogIndex++
-                if(this.dialogIndex < this.dialogLines.length){
+                if(this.dialogIndex < this.currentDialogLines.length){
                     this.showDialog()
                 } else {
                     this.inDialog = false
@@ -190,7 +311,7 @@ class Play extends Phaser.Scene{
                     // had issue with dialog box repeatdly showing up and player remaining
                     //frozen, added delay so p1 can walk away
                     this.time.delayedCall(1000, () => {
-                        this.canTriggerDialog = true
+                        this.canTriggerDialog[this.currentNPC] = true
                     })
                 }
             }
@@ -240,6 +361,15 @@ class Play extends Phaser.Scene{
         }
     }
 
+    startDialog(npcKey, dialogLines) {
+        this.inDialog = true
+        this.canTriggerDialog[npcKey] = false
+        this.currentNPC = npcKey
+        this.currentDialogLines = dialogLines
+        this.dialogIndex = 0
+        this.showDialog()
+    }
+
     showDialog(){
             const boxX = 10
             const boxY = this.game.config.height - 100
@@ -255,7 +385,7 @@ class Play extends Phaser.Scene{
             this.dialogBox.setVisible(true)
 
             this.dialogText.setText(
-                this.dialogLines[this.dialogIndex] + '\n SPACE to Continue'
+                this.currentDialogLines[this.dialogIndex] + '\n SPACE to Continue'
             )
             this.dialogText.setVisible(true)
         }
