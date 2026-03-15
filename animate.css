@@ -1,0 +1,18 @@
+
+body {
+    
+    perspective: 900px;
+}
+
+canvas.postcard-flip {
+    border-radius: 8px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+    animation: postcardArrive 1.2s ease-out forwards;
+}
+
+@keyframes postcardArrive {
+    0%   { transform: rotateY(90deg) rotate(-8deg) scale(0.7);  opacity: 0; }
+    55%  { transform: rotateY(-6deg) rotate(2deg)  scale(1.06); opacity: 1; }
+    75%  { transform: rotateY(3deg)  rotate(-1deg) scale(1.0);              }
+    100% { transform: rotateY(0deg)  rotate(0deg)  scale(1.0);  opacity: 1; }
+}

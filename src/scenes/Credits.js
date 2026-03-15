@@ -16,7 +16,7 @@ class Credits extends Phaser.Scene {
             }
         ).setOrigin(0.5)
 
-        // R key to restart
+        // M key to return to menu
         this.mKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.M
         )

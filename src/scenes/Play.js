@@ -266,6 +266,11 @@ class Play extends Phaser.Scene{
             frameRate: 8,
             repeat: -1
         })
+
+        //Making a dev shortcut to test postcard flip
+        this.pKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.P
+        )
     }
 
     update(){
@@ -358,6 +363,11 @@ class Play extends Phaser.Scene{
             this.stepsSFX.play()
         } else if(!isMoving && this.stepsSFX.isPlaying) {
             this.stepsSFX.stop()
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(this.pKey)) {
+            this.bgMusic.stop()
+            this.scene.start('EndScene')    
         }
     }
 
