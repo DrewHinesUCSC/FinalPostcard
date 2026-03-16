@@ -1,5 +1,29 @@
 /*
 Drew Hines
+03/16/2026
+Final Postcard that is a postcard memory to my siblings that serves as 
+a memento of our childhood growing up in South Louisiana. We spent most weekends in
+New Orleans, and we often make reunion trips there. This is to evoke 
+those memories with typical New Orleans activities.
+After completing the four activities, the postcard will flip over to reveal a pic
+of us in postcard format. The project fits the postcard prompt as postcards are often
+sent as mementos that capture time and places.
+Note: Pressing the 'P' key during the main game play will send you direct to the
+final postcard scene without having to complete all activities
+
+The five major Phaser components used:
+1) Arcade Physics System
+2) Tilemaps imported using Tiled
+3) Animation Manager
+4) Camera, used ScrollingStyles as reference for Zelda-style camera movements
+5) Text Objects, initally planned to use Json file as demonstrated in class, but
+kept dialog to a minimum instead. Also used a cooldown timer in dialog scenes, otherwise
+players become stuck during overlaps
+
+
+
+
+
 03/08/2026
 Setting up prototype using Professor Altice ScrollingStyles
 as a template, using to test if i have properly created the tilemap

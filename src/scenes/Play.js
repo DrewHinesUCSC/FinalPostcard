@@ -46,7 +46,7 @@ class Play extends Phaser.Scene{
             //adding footstep sounds
         this.stepsSFX = this.sound.add('steps',{
             loop: true,
-            volume: 0.5
+            volume: 0.3
         })
 
         //adding bgMusic
@@ -94,24 +94,25 @@ class Play extends Phaser.Scene{
         //Added dialog for all four interactions. Still seems simple enough
         //to keep here instead of json file
         this.tarotDialogLines = [
+            "I knew you were coming",
             "Let's see what the cards have in store for you...",
-            "Press Y to find out what the spirits have to say"
+            "Press `Y` to find out what the spirits have to say"
             
         ]
         this.vuduDialogLines = [
+            "Welcome to my house of Voodoo",
             "The spirits whisper secrets to those who listen...",
-            "Your fate is bound to this place.",
-            "Press Y if you aren't afraid of the macabre"
+            "Press `Y` if you aren't afraid of the macabre"
         ]
         this.restPOSDialogLines = [
             "We serve all of New Orleans favorites!",
             "I would highly suggest the Gumbo today",
-            "Press Y for a bowl of Gumbo"
+            "Press `Y` for a bowl of Gumbo"
         ]
         this.barDialogLines = [
-            "Hurricanes so good you want remember yo name",
-            "If you still standind after 3, you are stronger than me!",
-            "Press Y for a Hurricane"
+            "Hurricanes so good you won't remember your name",
+            "If you still standing after 3, you are stronger than me!",
+            "Press `Y` for a Hurricane"
         ]
         this.currentDialogLines = []
         this.dialogIndex = 0

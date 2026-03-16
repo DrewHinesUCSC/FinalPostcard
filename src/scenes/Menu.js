@@ -19,7 +19,6 @@ class Menu extends Phaser.Scene{
         this.bgMusic.play()
 
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-        //this.scene.start("playScene")
         this.CKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
     }
     update(){
