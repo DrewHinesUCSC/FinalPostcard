@@ -5,6 +5,7 @@ class End extends Phaser.Scene {
 
     preload() {
         this.load.image('endCard', './assets/EndPC.png')
+        this.load.audio('Andromeda','./assests/Andromeda.wav')
     }
 
     create() {
@@ -25,6 +26,11 @@ class End extends Phaser.Scene {
 
         // us animate css to do postcard flip
         this.game.canvas.classList.add('postcard-flip')
+         this.bgMusic = this.sound.add('Andromeda',{
+            volume: 0.2,
+            loop: true
+        })
+        this.bgMusic.play()
 
         this.rKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.R
@@ -34,6 +40,7 @@ class End extends Phaser.Scene {
     update() {
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.start('MenuScene')
+            this.bgMusic.stop()
         }
     }
 

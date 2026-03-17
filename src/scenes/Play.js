@@ -28,6 +28,7 @@ class Play extends Phaser.Scene{
         //loading audio for stepSFX and bgMusic
         this.load.audio('steps', './assets/Steps.wav')
         this.load.audio('bgMusic','./assets/Andromeda.wav')
+        this.load.audio('task','./assets/Task.wav')
     }
 
     create(){
@@ -46,13 +47,19 @@ class Play extends Phaser.Scene{
             //adding footstep sounds
         this.stepsSFX = this.sound.add('steps',{
             loop: true,
+            volume: 0.2
+        })
+
+        //adding task sound
+        this.taskSound = this.sound.add('task',{
+            loop: false,
             volume: 0.3
         })
 
         //adding bgMusic
         this.bgMusic = this.sound.add('bgMusic',{
             loop: true,
-            volume: 0.2
+            volume: 0.3
         })
         this.bgMusic.play()
 
@@ -283,6 +290,7 @@ class Play extends Phaser.Scene{
             
             // Y key completes current activity
             if(Phaser.Input.Keyboard.JustDown(this.yKey)) {
+                this.taskSound.play()
                 this.activitiesCompleted[this.currentNPC] = true
                 
                 // Update task counter by checking if values are strictly true (===)
